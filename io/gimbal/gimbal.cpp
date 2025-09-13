@@ -167,12 +167,12 @@ void Gimbal::read_thread()
 
     std::lock_guard<std::mutex> lock(mutex_);
 
-    state_.yaw = rx_data_.yaw;
-    state_.yaw_vel = rx_data_.yaw_vel;
-    state_.pitch = rx_data_.pitch;
-    state_.pitch_vel = rx_data_.pitch_vel;
-    state_.bullet_speed = rx_data_.bullet_speed;
-    state_.bullet_count = rx_data_.bullet_count;
+    // state_.yaw = rx_data_.yaw;
+    // state_.yaw_vel = rx_data_.yaw_vel;
+    // state_.pitch = rx_data_.pitch;
+    // state_.pitch_vel = rx_data_.pitch_vel;
+    // state_.bullet_speed = rx_data_.bullet_speed;
+    // state_.bullet_count = rx_data_.bullet_count;
 
     switch (rx_data_.mode) {
       case 0:

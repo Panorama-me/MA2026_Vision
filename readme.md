@@ -154,7 +154,7 @@ IMU型号：使用C板内置BMI088作为IMU\
         ```
         然后在文件中写入如下内容（用真实 ID 替换示例，SYMLINK 是规则应用后固定的串口名）：
         ```
-        SUBSYSTEM=="tty", ATTRS{idVendor}=="1234", ATTRS{idProduct}=="1234", ATTRS{serial}=="A1234567", SYMLINK+="gimbal"
+        SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d3", ATTRS{serial}=="58CD119177", SYMLINK+="gimbal"
         ```
     4. 重新加载 udev 规则
         ```
@@ -346,4 +346,7 @@ DPS = 单位时间射击窗口占比 \times 射频 \times 单发子弹伤害
 ## 项目成员
 王骁扬、杨佳轩、奚睿豪、俞选涛、吴圳楠、杨瑞灵、程翔宇
 
-
+# 补充
+## 1.实现c板陀螺仪的can通信
+## 2.实现串口通信
+## 3.基本自瞄功能实现

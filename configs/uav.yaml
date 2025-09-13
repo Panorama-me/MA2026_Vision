@@ -60,13 +60,15 @@ bullet_speed_canid: 0x110
 send_canid: 0xff
 can_interface: "can0"
 
+com_port: "/dev/gimbal"
+
 #####-----tracker参数-----###
 min_detect_count: 5
 max_temp_lost_count: 15
 outpost_max_temp_lost_count: 150
 
 #####-----aimer参数-----#####
-yaw_offset: 0 # degree -2.5
+yaw_offset: 0 # degree -2.5 注意下面全是弧度！
 pitch_offset: 0 # degree 2
 comming_angle: 70 # degree
 leaving_angle: 30 # degree
@@ -91,9 +93,6 @@ R_gimbal2imubody: [1, 0, 0, 0, 1, 0, 0, 0, 1]
 camera_matrix: [1573.2790672555718, 0, 611.67072204843134, 0, 1574.2553165317206, 510.50473008416765, 0, 0, 1]
 distort_coeffs: [-0.10229534591559765, 0.20407070747797507, 0.0013223608023970506, 0.0012959373593525293, 0]
 
-# #R_camera2gimbal: [-0.90317965747373907, -0.033067887988420468, -0.42798717400128328, 0.42925759951144388, -0.064691966209073026, -0.90086228846016003, 0.0021022814493850432, -0.99735724005593351, 0.072623110100835886]
-# R_camera2gimbal: [-1, 0, 0, 0, 0, -1, 0, -1, 0]
-# t_camera2gimbal: [-0.024152587070259982, -0.033598997484083994, 0.072448540189959873]
 # 相机同理想情况的偏角: yaw1.61 pitch1.85 roll-0.11 degree
 # 标定板到世界坐标系原点的水平距离: 1.56 m
 # 标定板同竖直摆放时的偏角: yaw-104.82 pitch17.73 roll-2.10 degree

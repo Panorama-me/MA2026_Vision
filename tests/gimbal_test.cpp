@@ -12,7 +12,7 @@
 const std::string keys =
   "{help h usage ? | | 输出命令行参数说明}"
   "{f              | | 是否开火}"
-  "{@config-path   |configs/standard.yaml | yaml配置文件路径 }";
+  "{@config-path   |configs/uav.yaml | yaml配置文件路径 }";
 
 using namespace std::chrono_literals;
 

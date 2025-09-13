@@ -61,7 +61,7 @@ private:
   };
 
   tools::ThreadSafeQueue<IMUData> queue_;  // 必须在can_之前初始化，否则存在死锁的可能
-  SocketCAN can_;
+  // SocketCAN can_;
   IMUData data_ahead_;
   IMUData data_behind_;
 

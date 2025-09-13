@@ -12,8 +12,8 @@ CBoard::CBoard(const std::string & config_path , const std::string& mode_str)
   shoot_mode(ShootMode::left_shoot),
   bullet_speed(0),
   queue_(5000),
-  current_mode_(mode_str),
-  can_(read_yaml(config_path), std::bind(&CBoard::callback, this, std::placeholders::_1))
+  current_mode_(mode_str)
+  //can_(read_yaml(config_path), std::bind(&CBoard::callback, this, std::placeholders::_1))
 // 注意: callback的运行会早于Cboard构造函数的完成
 {
   // 1. 解析模式字符串，转换为CommMode枚举
@@ -34,10 +34,10 @@ CBoard::CBoard(const std::string & config_path , const std::string& mode_str)
       } catch (const std::exception & e) {
           tools::logger()->error("[Gimbal] Failed to open serial: {}", e.what());
           exit(1);
-          thread_ = std::thread(&CBoard::read_thread, this);
+      } 
+        thread_ = std::thread(&CBoard::read_thread, this);
           queue_.pop();
           tools::logger()->info("[Gimbal] First q received.");
-      } 
     } 
     else {
         throw std::invalid_argument("Invalid communication mode");
@@ -84,14 +84,14 @@ void CBoard::send(Command command)
     frame.can_dlc = 8;
     frame.data[0] = (command.control) ? 1 : 0;
     frame.data[1] = (command.shoot) ? 1 : 0;
-    frame.data[2] = (int16_t)(command.yaw * 1e3) >> 8;
-    frame.data[3] = (int16_t)(command.yaw * 1e3);
-    frame.data[4] = (int16_t)(command.pitch * 1e3) >> 8;
-    frame.data[5] = (int16_t)(command.pitch * 1e3);
-    frame.data[6] = (int16_t)(command.horizon_distance * 1e3) >> 8;
-    frame.data[7] = (int16_t)(command.horizon_distance * 1e3);
+    frame.data[2] = (int16_t)(command.yaw * 1e2) >> 8;
+    frame.data[3] = (int16_t)(command.yaw * 1e2);
+    frame.data[4] = (int16_t)(command.pitch * 1e2) >> 8;
+    frame.data[5] = (int16_t)(command.pitch * 1e2);
+    frame.data[6] = (int16_t)(command.horizon_distance * 1e2) >> 8;
+    frame.data[7] = (int16_t)(command.horizon_distance * 1e2);
     try {
-      can_.write(&frame);
+      // can_.write(&frame);
     } catch (const std::exception & e) {
       tools::logger()->warn("{}", e.what());
     }
@@ -174,7 +174,7 @@ bool CBoard::read(uint8_t * buffer, size_t size)
   try {
     return serial_.read(buffer, size) == size;
   } catch (const std::exception & e) {
-    // tools::logger()->warn("[Gimbal] Failed to read serial: {}", e.what());
+    tools::logger()->warn("[Gimbal] Failed to read serial: {}", e.what());
     return false;
   }
 }
@@ -214,13 +214,12 @@ void CBoard::read_thread()
       reconnect();
       continue;
     }
-
     if (!read(reinterpret_cast<uint8_t *>(&rx_data_), sizeof(rx_data_.head))) {
       error_count++;
       continue;
     }
 
-    if (rx_data_.head[0] != 'S' || rx_data_.head[1] != 'P') continue;
+    if (rx_data_.head[0] != 'M' || rx_data_.head[1] != 'A') continue;
 
     auto t = std::chrono::steady_clock::now();
 
@@ -242,12 +241,12 @@ void CBoard::read_thread()
 
     std::lock_guard<std::mutex> lock(mutex_);
 
-    state_.yaw = rx_data_.yaw;
-    state_.yaw_vel = rx_data_.yaw_vel;
-    state_.pitch = rx_data_.pitch;
-    state_.pitch_vel = rx_data_.pitch_vel;
-    state_.bullet_speed = rx_data_.bullet_speed;
-    state_.bullet_count = rx_data_.bullet_count;
+    // state_.yaw = rx_data_.yaw;
+    // state_.yaw_vel = rx_data_.yaw_vel;
+    // state_.pitch = rx_data_.pitch;
+    // state_.pitch_vel = rx_data_.pitch_vel;
+    // state_.bullet_speed = rx_data_.bullet_speed;
+    // state_.bullet_count = rx_data_.bullet_count;
 
     switch (rx_data_.mode) {
       case 0:

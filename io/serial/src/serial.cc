@@ -226,6 +226,11 @@ void Serial::setPort(const string & port)
   bool was_open = pimpl_->isOpen();
   if (was_open) close();
   pimpl_->setPort(port);
+  pimpl_->setBaudrate(115200);
+  pimpl_->setBytesize(eightbits);
+  pimpl_->setParity(parity_none);
+  pimpl_->setStopbits(stopbits_one);
+  pimpl_->setFlowcontrol(flowcontrol_none);
   if (was_open) open();
 }
 

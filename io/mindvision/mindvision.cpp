@@ -30,10 +30,7 @@ MindVision::MindVision(double exposure_ms, double gamma, const std::string & vid
     while (!quit_) {
       std::this_thread::sleep_for(100ms);
 
-      if (ok_) continue;d<double>(yaml, "gamma");
-    auto vid_pid = tools::read<std::string>(yaml, "vid_pid");
-    camera_ = std::make_unique<MindVision>(exposure_ms, gamma, vid_pid);
-  }
+      if (ok_) continue;
 
       if (capture_thread_.joinable()) capture_thread_.join();
 

@@ -230,7 +230,9 @@ void Serial::setPort(const string & port)
   pimpl_->setBytesize(eightbits);
   pimpl_->setParity(parity_none);
   pimpl_->setStopbits(stopbits_one);
-  pimpl_->setFlowcontrol(flowcontrol_none);
+  // 配置：读写超时 100ms，无字节间超时（适用于大多数串口设备）
+  serial::Timeout timeout = serial::Timeout::simpleTimeout(100);
+  setTimeout(timeout);  // 给串口设置超时
   if (was_open) open();
 }
 

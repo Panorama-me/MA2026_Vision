@@ -4,7 +4,7 @@
 #include "tools/logger.hpp"
 #include "tools/math_tools.hpp"
 #include "tools/yaml.hpp"
-
+#include <iomanip>
 namespace io
 {
 CBoard::CBoard(const std::string & config_path , const std::string& mode_str)
@@ -12,8 +12,8 @@ CBoard::CBoard(const std::string & config_path , const std::string& mode_str)
   shoot_mode(ShootMode::left_shoot),
   bullet_speed(0),
   queue_(5000),
-  current_mode_(mode_str)
-  //can_(read_yaml(config_path), std::bind(&CBoard::callback, this, std::placeholders::_1))
+   current_mode_(mode_str)
+  // can_(read_yaml(config_path), std::bind(&CBoard::callback, this, std::placeholders::_1))
 // 注意: callback的运行会早于Cboard构造函数的完成
 {
   // 1. 解析模式字符串，转换为CommMode枚举
@@ -36,8 +36,8 @@ CBoard::CBoard(const std::string & config_path , const std::string& mode_str)
           exit(1);
       } 
         thread_ = std::thread(&CBoard::read_thread, this);
-          queue_.pop();
-          tools::logger()->info("[Gimbal] First q received.");
+        queue_.pop();
+        tools::logger()->info("[Gimbal] First q received.");
     } 
     else {
         throw std::invalid_argument("Invalid communication mode");
@@ -99,11 +99,7 @@ void CBoard::send(Command command)
   else if(current_mode_ == "serial") {
     tx_data_.mode = command.control ? (command.shoot ? 2 : 1) : 0;
     tx_data_.yaw = command.yaw;
-    tx_data_.yaw_vel = 0;
-    tx_data_.yaw_acc = 0;
     tx_data_.pitch = command.pitch;
-    tx_data_.pitch_vel = 0;
-    tx_data_.pitch_acc = 0;
     tx_data_.crc16 = tools::get_crc16(
       reinterpret_cast<uint8_t *>(&tx_data_), sizeof(tx_data_) - sizeof(tx_data_.crc16));
   
@@ -214,6 +210,7 @@ void CBoard::read_thread()
       reconnect();
       continue;
     }
+
     if (!read(reinterpret_cast<uint8_t *>(&rx_data_), sizeof(rx_data_.head))) {
       error_count++;
       continue;
@@ -226,7 +223,7 @@ void CBoard::read_thread()
     if (!read(
           reinterpret_cast<uint8_t *>(&rx_data_) + sizeof(rx_data_.head),
           sizeof(rx_data_) - sizeof(rx_data_.head))) {
-      error_count++;
+          error_count++;
       continue;
     }
 
@@ -236,8 +233,17 @@ void CBoard::read_thread()
     }
 
     error_count = 0;
-    Eigen::Quaterniond q(rx_data_.q[0], rx_data_.q[1], rx_data_.q[2], rx_data_.q[3]);
-    queue_.push({q, t});
+    // Eigen::Quaterniond q(rx_data_.q[0], rx_data_.q[0], rx_data_.q[2], rx_data_.q[3]);
+    auto timestamp = std::chrono::steady_clock::now();
+    auto w = (int16_t)(rx_data_.q[0] << 8 | rx_data_.q[1]) / 1e3;
+    auto x = (int16_t)(rx_data_.q[2] << 8 | rx_data_.q[3]) / 1e3;
+    auto y = (int16_t)(rx_data_.q[4] << 8 | rx_data_.q[5]) / 1e3;
+    auto z = (int16_t)(rx_data_.q[6] << 8 | rx_data_.q[7]) / 1e3;
+    if (std::abs(x * x + y * y + z * z + w * w - 1) > 1e-2) {
+      tools::logger()->warn("Invalid q: {} {} {} {}", w, x, y, z);
+      continue;
+    }
+    queue_.push({{w,x,y,z},timestamp});
 
     std::lock_guard<std::mutex> lock(mutex_);
 

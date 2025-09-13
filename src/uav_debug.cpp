@@ -59,7 +59,7 @@ int main(int argc, char * argv[])
     camera.read(img, t);
     q = cboard.imu_at(t - 1ms);
     mode = cboard.mode;
-    // recorder.record(img, q, t);
+    recorder.record(img, q, t);
     if (last_mode != mode) {
       tools::logger()->info("Switch to {}", io::MODES[mode]);
       last_mode = mode;

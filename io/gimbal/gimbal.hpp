@@ -16,9 +16,9 @@ namespace io
 {
 struct __attribute__((packed)) GimbalToVision
 {
-  uint8_t head[2] = {};
+  uint8_t head[2] = {'M', 'A'};
   uint8_t mode;  // 0: 空闲, 1: 自瞄, 2: 小符, 3: 大符
-  uint16_t q[4];    // wxyz顺序
+  uint8_t q[8];    // wxyz顺序
   // float yaw;
   // float yaw_vel;
   // float pitch;
@@ -35,11 +35,7 @@ struct __attribute__((packed)) VisionToGimbal
   uint8_t head[2] = {'M', 'A'};
   uint8_t mode;  // 0: 不控制, 1: 控制云台但不开火，2: 控制云台且开火
   float yaw;
-  float yaw_vel;
-  float yaw_acc;
   float pitch;
-  float pitch_vel;
-  float pitch_acc;
   uint16_t crc16;
 };
 

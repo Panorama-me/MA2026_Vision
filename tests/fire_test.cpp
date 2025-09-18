@@ -34,11 +34,7 @@ int main(int argc, char * argv[])
   io::VisionToGimbal plan;
   auto last_t = std::chrono::steady_clock::now();
   plan.yaw = 0;
-  plan.yaw_vel = 0;
-  plan.yaw_acc = 0;
   plan.pitch = 0;
-  plan.pitch_vel = 0;
-  plan.pitch_acc = 0;
 
   while (!exiter.exit()) {
     auto now = std::chrono::steady_clock::now();

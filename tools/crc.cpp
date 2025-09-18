@@ -1,4 +1,5 @@
 #include "crc.hpp"
+#include <iomanip>
 
 constexpr uint8_t CRC8_INIT = 0xff;
 const uint8_t CRC8_TABLE[256] = {
@@ -86,6 +87,7 @@ bool check_crc16(const uint8_t * data, uint32_t len)
 {
   uint16_t crc16 = (data[len - 2] << 8) | data[len - 1];
   return get_crc16(data, len - 2) == crc16;
+  
 }
 
 }  // namespace tools

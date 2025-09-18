@@ -7,8 +7,8 @@ struct Command
 {
   bool control;
   bool shoot;
-  double yaw;
-  double pitch;
+  float yaw;
+  float pitch;
   double horizon_distance = 0;  //无人机专有
 };
 

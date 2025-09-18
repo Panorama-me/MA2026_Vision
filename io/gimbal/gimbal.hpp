@@ -23,7 +23,7 @@ struct __attribute__((packed)) GimbalToVision
   // float yaw_vel;
   // float pitch;
   // float pitch_vel;
-  // float bullet_speed;
+  float bullet_speed;
   // uint16_t bullet_count;  // 子弹累计发送次数
   uint16_t crc16;
 };
@@ -34,9 +34,9 @@ struct __attribute__((packed)) VisionToGimbal
 {
   uint8_t head[2] = {'M', 'A'};
   uint8_t mode;  // 0: 不控制, 1: 控制云台但不开火，2: 控制云台且开火
-  float yaw;
-  float pitch;
-  uint16_t crc16;
+  float yaw; //4字节
+  float pitch;//4字节
+  uint16_t crc16;//两字节
 };
 
 static_assert(sizeof(VisionToGimbal) <= 64);

@@ -232,6 +232,31 @@ void CBoard::read_thread()
       continue;
     }
 
+//     if (!tools::check_crc16(reinterpret_cast<uint8_t *>(&rx_data_), sizeof(rx_data_))) {
+//     tools::logger()->debug("[Gimbal] CRC16 check failed.");
+    
+//     // -------------------------- 新增：打印原始接收数据 --------------------------
+//     // 1. 将 rx_data_ 转为 uint8_t*，获取原始字节流
+//     const uint8_t* raw_data = reinterpret_cast<const uint8_t*>(&rx_data_);
+//     // 2. 获取接收数据的总长度（rx_data_ 结构体的字节数，即实际接收的字节数）
+//     const size_t data_len = sizeof(rx_data_);
+    
+//     // 3. 拼接原始数据的十六进制字符串（避免多次日志调用，更高效）
+//     std::stringstream raw_data_str;
+//     raw_data_str << "[Gimbal] Received raw data (Hex): ";
+//     for (size_t i = 0; i < data_len; ++i) {
+//         // 以 "0xXX " 格式拼接，不足两位补0（如 0x0A 而非 0xA）
+//         raw_data_str << "0x" << std::hex << std::setw(2) << std::setfill('0') 
+//                     << static_cast<int>(raw_data[i]) << " ";
+//     }
+//     // 4. 打印原始数据（用 debug 级别，和原日志级别一致）
+//     tools::logger()->debug(raw_data_str.str());
+//     // --------------------------------------------------------------------------
+    
+//     continue; // 校验失败，跳过后续处理
+// }
+
+
     error_count = 0;
     // Eigen::Quaterniond q(rx_data_.q[0], rx_data_.q[0], rx_data_.q[2], rx_data_.q[3]);
     auto timestamp = std::chrono::steady_clock::now();
@@ -246,7 +271,17 @@ void CBoard::read_thread()
     queue_.push({{w,x,y,z},timestamp});
 
     std::lock_guard<std::mutex> lock(mutex_);
+    bullet_speed = rx_data_.bullet_speed;
+    // 限制日志输出频率为1Hz
+    static auto last_log_time = std::chrono::steady_clock::time_point::min();
+    auto now = std::chrono::steady_clock::now();
 
+    if (bullet_speed > 0 && tools::delta_time(now, last_log_time) >= 1.0) {
+      tools::logger()->info(
+        "[CBoard] Bullet speed: {:.2f} m/s, Mode: {}, Shoot mode: {}, FT angle: {:.2f} rad",
+        bullet_speed, MODES[mode], SHOOT_MODES[shoot_mode], ft_angle);
+      last_log_time = now;
+    }
     // state_.yaw = rx_data_.yaw;
     // state_.yaw_vel = rx_data_.yaw_vel;
     // state_.pitch = rx_data_.pitch;
